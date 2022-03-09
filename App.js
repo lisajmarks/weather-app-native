@@ -1,26 +1,56 @@
 import { StatusBar } from "expo-status-bar";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import Weather from "./Components/Weather";
+import { API_KEY, API_URL } from "./utils/APIKeys";
 
 export default function App() {
+  const [errorMessage, setErrorMessage] = useState(null);
   const [currentWeather, setCurrentWeather] = useState(null);
+  const [unitsSystem, setUnitsSystem] = useState("metric");
+
+  useEffect(() => {
+    load();
+  }, [unitsSystem]);
 
   async function load() {
-    const BASE_WEATHER_URL = "https://api.openweathermap.org/data/2.5/";
-    let url =
-      BASE_WEATHER_URL +
-      `weather?lat=${lat}&units=imperial&lon=${lon}&appid=${API_KEY}`;
+    setCurrentWeather(null);
+    setErrorMessage(null);
+    try {
+      let lat = "37.773972";
+      let lon = "-122.431297";
+      let url = `${API_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+      console.log(url);
 
-    const response = await fetch(url);
-    const result = await response.json();
+      const response = await fetch(url);
+      const result = await response.json();
+
+      if (response.ok) {
+        setCurrentWeather(result);
+      } else {
+        setErrorMessage(result.message);
+      }
+    } catch (error) {}
   }
 
-  return (
-    <View style={styles.container}>
-      <Weather />
-      <StatusBar style="auto" />
-    </View>
-  );
+  if (currentWeather) {
+    //deconstructing main and temp
+    const {
+      main: { temp },
+    } = currentWeather;
+    return (
+      <View style={styles.container}>
+        <Text> {temp}</Text>
+        <StatusBar style="auto" />
+      </View>
+    );
+  } else {
+    return (
+      <View style={styles.container}>
+        <Text> {errorMessage}</Text>
+        <StatusBar style="auto" />
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
