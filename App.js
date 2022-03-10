@@ -6,7 +6,7 @@ import { API_KEY, API_URL } from "./utils/APIKeys";
 export default function App() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [currentWeather, setCurrentWeather] = useState(null);
-  const [unitsSystem, setUnitsSystem] = useState("metric");
+  const [unitsSystem, setUnitsSystem] = useState("imperial");
 
   useEffect(() => {
     load();
@@ -18,7 +18,7 @@ export default function App() {
     try {
       let lat = "37.773972";
       let lon = "-122.431297";
-      let url = `${API_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+      let url = `${API_URL}?lat=${lat}&lon=${lon}&units=${unitsSystem}&appid=${API_KEY}`;
       console.log(url);
 
       const response = await fetch(url);
@@ -29,7 +29,9 @@ export default function App() {
       } else {
         setErrorMessage(result.message);
       }
-    } catch (error) {}
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
   }
 
   if (currentWeather) {
@@ -39,15 +41,17 @@ export default function App() {
     } = currentWeather;
     return (
       <View style={styles.container}>
-        <Text> {temp}</Text>
         <StatusBar style="auto" />
+
+        <Text> {temp} </Text>
       </View>
     );
   } else {
     return (
       <View style={styles.container}>
-        <Text> {errorMessage}</Text>
         <StatusBar style="auto" />
+        <View style={styles.main}></View>
+        <Text> {errorMessage}</Text>
       </View>
     );
   }
@@ -57,7 +61,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    alignItems: "center",
     justifyContent: "center",
+  },
+  main: {
+    justifyContent: "center",
+    flex: 1,
   },
 });
