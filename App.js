@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { API_KEY, API_URL } from "./utils/APIKeys";
+import WeatherInfo from "./Components/WeatherInfo";
 
 export default function App() {
   const [errorMessage, setErrorMessage] = useState(null);
@@ -35,15 +36,10 @@ export default function App() {
   }
 
   if (currentWeather) {
-    //deconstructing main and temp
-    const {
-      main: { temp },
-    } = currentWeather;
     return (
       <View style={styles.container}>
         <StatusBar style="auto" />
-
-        <Text> {temp} </Text>
+        <WeatherInfo currentWeather={currentWeather}></WeatherInfo>
       </View>
     );
   } else {
